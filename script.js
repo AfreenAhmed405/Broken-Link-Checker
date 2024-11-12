@@ -1,16 +1,30 @@
 function populateTable(tableData) {
-    data = JSON.parse(tableData);
-    console.log(data);
     const sortableTable = new SortableTable();
     sortableTable.setTable(document.querySelector('#brokenLinkTable'));
 
-    data.forEach((row) => {
-        row.guide_owner_name = `<a href="mailto:${row.guide_owner_email}">${row.guide_owner_name}</a>`;
-        row.siteimprove_url = `<a href="${row.siteimprove_url}">${row.siteimprove_url}</a>`;
-        row.guide_name = `<a href="${row.guide_url}">${row.guide_name}</a>`;
+    Object.entries(tableData).forEach(([ownerName, data]) => {
+        data.guide_owner_name = `<a href="mailto:${data.guide_owner_email}">${ownerName}</a>`;
+        data.unformatted_urls = data.siteimprove_urls;
+        data.siteimprove_urls = data.siteimprove_urls
+            .map(url => `<a href="${url}" target="_blank">${url}</a>`)
+            .join('<br><br>');
+
+        data.wysiwygContent = `
+            <strong>Owner:</strong>${ownerName}<br>
+            <strong>Links:</strong><br>
+            ${data.unformatted_urls}
+        `;
+
+        console.log(data.wysiwygContent);
+        
+        // TODO: Add the "Copy URLs" and "Copy - Email" buttons
+        data.copy = `
+            <button type="button" class="btn btn-dark m-1" onclick="copyToClipboard('${data.unformatted_urls}')">Copy URLs</button>
+            <button type="button" class="btn btn-dark m-1" onclick="copyToClipboardToEmail(\`${data.wysiwygContent}\`)">Copy - Email</button>
+        `;
     });
 
-    sortableTable.setData(data);
+    sortableTable.setData(Object.values(tableData)); 
     sortableTable.events()
         .on('sort', (event) => {
             console.log(`[SortableTable#onSort]
@@ -18,6 +32,29 @@ function populateTable(tableData) {
         event.sortDir=${event.sortDir}
         event.data=\n${JSON.stringify(event.data)}`);
     });
+}
+
+function copyToClipboard(text) {
+    console.log(text);
+    const plainText = text.replace(/<\/?[^>]+(>|$)/g, "");
+    navigator.clipboard.writeText(plainText)
+    .then(() => {
+        alert("URLs copied to clipboard!");
+    }).catch(err => {
+        console.error("Failed to copy text: ", err);
+    });
+}
+
+function copyToClipboardToEmail(text) {
+    console.log(text);
+    const textArea = document.createElement("textarea");
+    textArea.value = content;
+    document.body.appendChild(textArea);
+    textArea.select();
+    textArea.setSelectionRange(0, 99999); // For mobile devices
+    document.execCommand('copy');
+    document.body.removeChild(textArea);
+    alert("Email content copied to clipboard!");
 }
 
 function export2csv() {
@@ -29,11 +66,15 @@ function export2csv() {
     for (const row of rows) {
         const rowData = [];
         for (const [index, column] of row.querySelectorAll("th, td").entries()) {
-            const cellData = column.innerText.replace(/"/g, '""');
-            if (cellData.includes(",") || cellData.includes("\n")) {
-                rowData.push('"' + cellData + '"');
-            } else {
-                rowData.push(cellData);
+            console.log(index, column);
+            if (index < 2) {
+                console.log(index, column);
+                const cellData = column.innerText.replace(/"/g, '""');
+                if (cellData.includes(",") || cellData.includes("\n")) {
+                    rowData.push('"' + cellData + '"');
+                } else {
+                    rowData.push(cellData);
+                }
             }
         }
         tableData.push(rowData.join(","));
@@ -49,3 +90,4 @@ function export2csv() {
     a.click();
     document.body.removeChild(a);
 }
+

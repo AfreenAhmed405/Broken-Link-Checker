@@ -17,13 +17,13 @@ Your best bet would be to link to the home page of that website and then mention
 
 TODO:
 
-- Map owner to all broken links
+
 - accordion of owners --> copy to clipboard email contents (copy as list, br)
-- Batch request for link id retrieval 
+- Batch request for link id retrieval
 - Set up email everybody
-- JSON to in-memory database?
 - Make csv pretty
 - Key stats to page
 - DONE: Colors
 - DONE: Get token, error handling
 - Done: Button to run Curl calls
+- DONE: Map owner to all broken links

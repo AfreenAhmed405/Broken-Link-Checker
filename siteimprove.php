@@ -77,11 +77,10 @@
     $broken_links = json_decode($broken_links);
     $broken_links = $broken_links->items;
 
-    // Generate table entries
-    $file = 'all-brokenlinks.json';
-    $handle = fopen($file, 'w');
-    fclose($handle);
+    // Create owner hashmap
+    $hashmap = [];
 
+    // Generate table entries
     foreach($broken_links as $broken_link) {
       $pageId = $broken_link->id;
       $pagecurl_url = "https://api.eu.siteimprove.com/v2/sites/1348467636/quality_assurance/links/pages_with_broken_links/" . $pageId . "/broken_links?page=1&page_size=10";
@@ -127,44 +126,24 @@
         $guide_owner_last_name = $guide->owner->last_name;
         $guide_owner_name = $guide_owner_first_name . ' ' . $guide_owner_last_name;
 
-        if($libguide_root == $guide_friendly_url) {  
-          $rowData = [
-            'guide_owner_email' => $guide_owner_email,
-            'guide_owner_name' => $guide_owner_name,
-            'siteimprove_url' => $siteimprove_url,
-            'guide_name' => $guide_name,
-            'guide_url' => $guide_friendly_url
-          ]; 
-        } else if($libguide_root == $guide_url) {
-          $rowData = [
-            'guide_owner_email' => $guide_owner_email,
-            'guide_owner_name' => $guide_owner_name,
-            'siteimprove_url' => $siteimprove_url,
-            'guide_name' => $guide_name,
-            'guide_url' => $guide_url
-          ];
+        if($libguide_root == $guide_friendly_url || $libguide_root == $guide_url) {  
+          if (!isset($hashmap[$guide_owner_name])) {
+            $hashmap[$guide_owner_name] = [
+              'guide_owner_email' => $guide_owner_email,
+              'siteimprove_urls' => []
+            ];
+          }
+  
+          if (!in_array($siteimprove_url, $hashmap[$guide_owner_name]['siteimprove_urls'])) {
+            $hashmap[$guide_owner_name]['siteimprove_urls'][] = $siteimprove_url;
+          }
+
         }
       }
-
-      // Write to temp file -- could change to an in-memory db?
-      $handle = fopen($file, 'c+');
-      $fileContents = fread($handle, 8192); // Read the whole file
-
-      if (empty($fileContents)) {
-        fwrite($handle, "[\n");             // If file is empty, add '['
-      } else {
-          fseek($handle, 0, SEEK_END);      // Move to the end of the file
-          fwrite($handle, ",\n");           // Add a comma to separate the rows
-      }
-      fwrite($handle, json_encode($rowData));
-      fclose($handle);
     } 
-    file_put_contents($file, "\n]", FILE_APPEND); // Close file with ']' 
-
-    $fileRead = file_get_contents($file);
     return json_encode([
-      "fileContents" => $fileRead,
-      "token" => $responseData['access_token']
+      "token" => $responseData['access_token'], 
+      "hashMap" => $hashmap
     ]);
   }
 
