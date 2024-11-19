@@ -61,7 +61,7 @@
 
     // Get all SiteImprove Content
     curl_setopt_array($curl, array(
-      CURLOPT_URL => 'https://api.eu.siteimprove.com/v2/sites/1348467636/quality_assurance/links/pages_with_broken_links?page=1&page_size=100&group_id=14333507148',
+      CURLOPT_URL => 'https://api.eu.siteimprove.com/v2/sites/1348467636/quality_assurance/links/pages_with_broken_links?page=1&page_size=25&group_id=14333507148',
       CURLOPT_RETURNTRANSFER => true,
       CURLOPT_ENCODING => '',
       CURLOPT_MAXREDIRS => 10,

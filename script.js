@@ -91,21 +91,69 @@ function export2csv() {
     // Iterate over each row
     for (const row of rows) {
         const rowData = [];
-        for (const [index, column] of row.querySelectorAll("th, td").entries()) {
-            console.log(index, column);
-            if (index < 2) {
-                console.log(index, column);
-                const cellData = column.innerText.replace(/"/g, '""');
-                if (cellData.includes(",") || cellData.includes("\n")) {
-                    rowData.push('"' + cellData + '"');
-                } else {
-                    rowData.push(cellData);
+        const columns = row.querySelectorAll("td, th");
+        
+        if (columns.length >= 2) {
+            const firstColumn = columns[0].innerText.replace(/"/g, '""');  // Get the first column text
+            let secondColumn = columns[1].innerHTML.replace(/"/g, '""');  // Get the second column HTML content
+
+            // Check if the second column has <br> tags indicating multiple lines
+            if (secondColumn.includes("<br>")) {
+                // Split the multiline cell (in this case, the second cell) by <br><br> tags
+                const cellLines = secondColumn.split("<br><br>");
+
+                // For each line in the second column, create a new row with the same first column value
+                for (const line of cellLines) {
+                    const rowDataCopy = [];
+                    rowDataCopy.push(firstColumn);  // First column value (e.g., "Owner")
+
+                    // Extract text inside <a> tags from the second column (line)
+                    const regex = /<a[^>]*>(.*?)<\/a>/;
+                    const match = line.match(regex);
+                    let anchorText = "";
+                    if (match) {
+                        anchorText = match[1];  // The text inside the <a> tag
+                    } else {
+                        anchorText = line.trim();  // If there's no <a> tag, just take the line as is
+                    }
+
+                    // Check if the anchorText has commas or newlines, and quote it if necessary
+                    if (anchorText.includes(",") || anchorText.includes("\n")) {
+                        rowDataCopy.push('"' + anchorText + '"');
+                    } else {
+                        rowDataCopy.push(anchorText);
+                    }
+
+                    // Add the row data to the tableData array
+                    tableData.push(rowDataCopy.join(","));
                 }
+            } else {
+                // If the second column doesn't have <br> tags, just add the row as is
+                rowData.push(firstColumn);
+
+                // Extract text inside <a> tags from the second column (if any)
+                const regex = /<a[^>]*>(.*?)<\/a>/;
+                const match = secondColumn.match(regex);
+                let anchorText = "";
+                if (match) {
+                    anchorText = match[1];  // The text inside the <a> tag
+                } else {
+                    anchorText = secondColumn.trim();  // If there's no <a> tag, just take the content as is
+                }
+
+                // Check if the anchorText has commas or newlines, and quote it if necessary
+                if (anchorText.includes(",") || anchorText.includes("\n")) {
+                    rowData.push('"' + anchorText + '"');
+                } else {
+                    rowData.push(anchorText);
+                }
+
+                // Add the row data to the tableData array
+                tableData.push(rowData.join(","));
             }
         }
-        tableData.push(rowData.join(","));
     }
-  
+
     data += tableData.join("\n");
     
     // Create a blob and download the CSV

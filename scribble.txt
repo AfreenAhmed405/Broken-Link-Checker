@@ -1,7 +1,9 @@
 TODO:
+- Set up SQLite: Email button click should create an entry in db, and display email sent on button. Follow up button to send email to show how many days left?
 - Batch request for link id retrieval / async calls
-- Make csv pretty
 - Key stats to page
+- DONE: Make csv pretty
+- DONE: Push to GitHub
 - DONE: Colors
 - DONE: Get token, error handling
 - Done: Button to run Curl calls
