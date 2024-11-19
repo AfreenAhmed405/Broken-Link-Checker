@@ -27,7 +27,7 @@ Follow these steps to get your development environment set up.
 3. **Clone the repository**:  
    Clone the project repository into the `htdocs` directory using Git. In your terminal, run:
    ```bash
-   git clone <repo link>
+   git clone https://github.com/AfreenAhmed405/Broken-Link-Checker.git
 
 4. **Add secrets to token.env**:  
    Create a token.env in the project root directory and add these secrets: GET_BROKEN_LINKS=, CLIENT_ID=, CLIENT_SECRET=
