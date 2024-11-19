@@ -1,6 +1,9 @@
 # SiteImprove Broken Links Report
 > This web application automatically identifies and tracks broken links across all LibGuides hosted by Texas A&M University Libraries. It integrates with SiteImprove to scan and report broken links, and includes an emailing system that notifies each guide owner of their broken links with a detailed report. The tool streamlines the process of link maintenance, saving time for library staff and ensuring that all resources are up-to-date and fully functional.
 
+![Capture](https://github.com/user-attachments/assets/ce8cdedd-02fd-4cf9-8c04-a64cc5e7a1a7)
+
+
 ## Table of Contents
 - [Features](#features)
 - [Installation](#installation)
