@@ -32,8 +32,8 @@ Follow these steps to get your development environment set up.
    ```bash
    git clone https://github.com/AfreenAhmed405/Broken-Link-Checker.git
 
-4. **Add secrets to token.env**:  
-   Create a token.env in the project root directory and add these secrets: GET_BROKEN_LINKS=, CLIENT_ID=, CLIENT_SECRET=
+4. **Add secrets to tokens.env**:  
+   Create a tokens.env in the project root directory and add these secrets: GET_BROKEN_LINKS=, CLIENT_ID=, CLIENT_SECRET=
 
 5. **Start XAMPP**:  
     Open the XAMPP Control Panel, and start the Apache server to serve your application.
