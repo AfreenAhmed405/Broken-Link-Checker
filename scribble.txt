@@ -1,0 +1,11 @@
+TODO:
+- Batch request for link id retrieval / async calls
+- Make csv pretty
+- Key stats to page
+- DONE: Colors
+- DONE: Get token, error handling
+- Done: Button to run Curl calls
+- DONE: Map owner to all broken links
+- DONE: accordion of owners
+- DONE: copy to clipboard email contents (copy as list, br)
+- DONE: store secrets safely

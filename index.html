@@ -1,0 +1,82 @@
+<html lang="en">
+<head>
+    <title>Broken Link Checker</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="SiteImprove Broken Links Report">
+    <meta name="author" content="Afreen Ahmed">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<body>
+   <header class="container-fluid">
+        <div class="row bg-secondary text-white p-3 d-flex justify-content-center">
+            <h1>SiteImprove Broken Links Report</h1>
+        </div>
+   </header>
+
+   <main class="container">
+        <div class="row mt-4 d-flex justify-content-between">       
+            <div class="col-9 p-3 bg-light">
+                <button type="button" class="btn btn-info" id="generateTokenBtn">Generate Report</button>
+                <p id="tokenOutput"></p> 
+                <button type="button" class="btn btn-info mb-2" id="downloadBtn" onclick="export2csv()">Download as CSV</button>
+            </div>
+        
+            <div class="col-3 p-3 bg-dark text-white justify-content-center">  
+                <ol>
+                    <li><small>Click on the owner's name to open a new email.</small></li>
+                    <li><small>Click on the Email Body button and copy the content of the page.</small></li>
+                    <li><small>Paste into your message.</small></li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="row mt-4 mb-5 d-flex justify-content-between"> 
+            <div id="dataOutput"></div>      
+            <div class="p-1 col-sm-12 sortable-table">
+                <table class="table table-hover table-bordered" id="brokenLinkTable">
+                    <thead>
+                        <tr>
+                            <th scope="col" data-id="guide_owner_name" class="bg-light" sortable>
+                                <div>Owner</div>
+                            </th>
+                            <th scope="col" data-id="siteimprove_urls" class="bg-light">
+                                Broken Links
+                            </th>
+                            <th scope="col" data-id="copy" class="bg-light">
+                                Copy to Clipboard
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+   </main>
+
+   <!-- External JS Files-->
+   <script src="https://cdn.jsdelivr.net/npm/@riversun/sortable-table@1.0.0/lib/sortable-table.js"></script>
+   <script>
+        document.getElementById('generateTokenBtn').addEventListener('click', function() {
+            document.getElementById('tokenOutput').innerText = 'Generating report...';
+            fetch('siteimprove.php', {
+                method: 'POST',
+                body: new URLSearchParams({
+                    'action': 'generate_token'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('tokenOutput').innerText = 'Generated Token: ' + data.token;
+                populateTable(data.hashMap);
+            })
+            .catch(error => {
+                document.getElementById('tokenOutput').innerText = 'Error: ' + error;
+            });
+        });
+   </script>
+   <script type='text/javascript' src="script.js"></script>
+</body>
+</html> 
