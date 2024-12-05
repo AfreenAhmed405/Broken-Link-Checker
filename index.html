@@ -34,7 +34,7 @@
         </div>
 
         <div class="row mt-5 d-flex justify-content-center">
-            <p id="type"><strong>Monthly Broken Link Report</strong></p>
+            <p id="type"></p>
         </div>
 
         <div class="row mt-1 mb-5 d-flex justify-content-between"> 
@@ -77,7 +77,8 @@
             .then(response => response.json())
             .then(data => {
                 document.getElementById('tokenOutput').innerText = 'Generated Token: ' + data.token;
-                populateTable(data.hashMap);
+                document.getElementById('type').innerText = 'Monthly Broken Link Report';
+                populateTable(data.hashMap, 'monthly');
 
                 // If token generation is successful, update the report dates
                 const today = new Date();
@@ -123,7 +124,8 @@
             .then(response => response.json())
             .then(data => {
                 document.getElementById('tokenOutput').innerText = 'Generated Token: ' + data.token;
-                populateTable(data.hashMap);
+                document.getElementById('type').innerText = 'Defaulter Broken Link Report';
+                populateTable(data.hashMap, 'follow');
             })
             .catch(error => {
                 document.getElementById('tokenOutput').innerText = 'Error: ' + error;

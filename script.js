@@ -1,4 +1,4 @@
-function populateTable(tableData) {
+function populateTable(tableData, reportType) {
     const sortableTable = new SortableTable();
     sortableTable.setTable(document.querySelector('#brokenLinkTable'));
 
@@ -9,11 +9,8 @@ function populateTable(tableData) {
             .map(url => `<a href="${url}" target="_blank">${url}</a>`)
             .join('<br><br>');
         
-        data.copy = `<button type="button" class="btn btn-dark m-1" onclick="copyToClipboard('${data.unformatted_urls}', 'url')"><small>Copy URLs</small></button>
-                     <button type="button" class="btn btn-dark m-1" onclick="copyToClipboard('${data.unformatted_urls}', 'email')"><small>Email Body</small></button>`;
-
-        data.track = `<button type="button" class="btn btn-dark m-1" onclick="copyToClipboard('${data.unformatted_urls}', 'url')"><small>Copy URLs</small></button>
-                    <button type="button" class="btn btn-dark m-1" onclick="copyToClipboard('${data.unformatted_urls}', 'email')"><small>Email Body</small></button>`;
+        data.copy = `<button type="button" class="btn btn-dark m-1" onclick="copyToClipboard('${data.unformatted_urls}', 'url', '${reportType}')"><small>Copy URLs</small></button>
+                     <button type="button" class="btn btn-dark m-1" onclick="copyToClipboard('${data.unformatted_urls}', 'email', '${reportType}')"><small>Email Body</small></button>`;
     });
 
     sortableTable.setData(Object.values(tableData)); 
@@ -26,7 +23,7 @@ function populateTable(tableData) {
     });
 }
 
-function copyToClipboard(text, type) {
+function copyToClipboard(text, type, reportType) {
     if (type == "url") {
         const plainText = text.replace(/<\/?[^>]+(>|$)/g, "");
         navigator.clipboard.writeText(plainText)
@@ -36,7 +33,8 @@ function copyToClipboard(text, type) {
             console.error("Failed to copy text: ", err);
         });
     } else if (type == 'email') {
-        fetch('email.html')
+        if (reportType == 'monthly') {
+            fetch('email.html')
             .then(response => response.text())
             .then(emailContent => {
                 const urlsArray = text.split(',');
@@ -60,6 +58,33 @@ function copyToClipboard(text, type) {
             .catch(error => {
                 console.error('Error fetching email.html:', error);
             });
+        } else {
+            fetch('follow.html')
+            .then(response => response.text())
+            .then(emailContent => {
+                const urlsArray = text.split(',');
+
+                /** Uncomment for URLs to be in a list */ 
+                let urlsTable = '<ul>';
+                if (typeof text === 'string') {
+                    text = [text];
+                }
+                urlsArray.forEach(url => {
+                    url = url.trim();
+                    if (url) {
+                        urlsTable += `<li><a href="${url}" target="_blank">${url}</a></li>`;
+                    }
+                });
+                urlsTable += '</ul>';
+
+                const emailWithTable = emailContent.replace('<!-- TABLE_PLACEHOLDER -->', urlsTable);
+                openEmailWindow(emailWithTable);
+            })
+            .catch(error => {
+                console.error('Error fetching follow.html:', error);
+            });
+        }
+        
     }
 }
 

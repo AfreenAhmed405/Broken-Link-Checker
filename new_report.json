@@ -1,10 +1,16 @@
 {
     "reportDate": "2024-12-05",
     "brokenLinks": {
-        "Michael Mohkamkar": {
-            "guide_owner_email": "mmohkamkar@tamu.edu",
+        "Laura Sare": {
+            "guide_owner_email": "lsare@tamu.edu",
             "siteimprove_urls": [
-                "https:\/\/my2.siteimprove.com\/Inspector\/77878\/QualityAssurance\/Page?impmd=B859FB71EF7212E195D60C49F8D78B9C&PageId=73553349239#\/Issue\/BrokenLinks\/4600289029"
+                "https:\/\/my2.siteimprove.com\/Inspector\/77878\/QualityAssurance\/Page?impmd=B859FB71EF7212E195D60C49F8D78B9C&PageId=73548686195#\/Issue\/BrokenLinks\/231116897"
+            ]
+        },
+        "Jillian Eslami": {
+            "guide_owner_email": "jeslami@tamu.edu",
+            "siteimprove_urls": [
+                "https:\/\/my2.siteimprove.com\/Inspector\/77878\/QualityAssurance\/Page?impmd=B859FB71EF7212E195D60C49F8D78B9C&PageId=73547996052#\/Issue\/BrokenLinks\/4600289029"
             ]
         }
     }
