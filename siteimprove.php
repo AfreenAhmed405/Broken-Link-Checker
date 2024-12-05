@@ -142,6 +142,15 @@
         }
       }
     } 
+
+    $reportData = [
+      'reportDate' => date('Y-m-d'), // Current date
+      'brokenLinks' => $hashmap // The list of broken links and their owners
+    ];
+
+    // Store the report in a JSON file
+    file_put_contents('new_report.json', json_encode($reportData, JSON_PRETTY_PRINT));
+
     return json_encode([
       "token" => $responseData['access_token'], 
       "hashMap" => $hashmap

@@ -19,20 +19,17 @@
         <div class="row mt-4 d-flex justify-content-between">       
             <div class="col-9 p-3 bg-light">
                 <button type="button" class="btn btn-info" id="generateTokenBtn">Generate Report</button>
+                <button type="button" class="btn btn-danger" id="defaultBtn">Default Report</button>
                 <p id="tokenOutput"></p> 
                 <button type="button" class="btn btn-info mb-2" id="downloadBtn" onclick="export2csv()">Download as CSV</button>
-                <p>
-                    <span id="lastReport">Last Report Generated: </span><br />
-                    <span id="nextDue">Next due: </span>
-                </p>
             </div>
         
             <div class="col-3 p-3 bg-dark text-white justify-content-center">  
-                <ol>
-                    <li><small>Click on the owner's name to open a new email.</small></li>
-                    <li><small>Click on the Email Body button and copy the content of the page.</small></li>
-                    <li><small>Paste into your message.</small></li>
-                </ol>
+                <p>
+                    <span id="lastReport">Last Report Generated: </span><br />
+                    <span id="followDue">Follow Up On: </span><br />
+                    <span id="nextDue">Next Report Due: </span>
+                </p>
             </div>
         </div>
 
@@ -50,9 +47,6 @@
                             </th>
                             <th scope="col" data-id="copy" class="bg-light">
                                 Copy to Clipboard
-                            </th>
-                            <th scope="col" data-id="track" class="bg-light">
-                                Tracker
                             </th>
                         </tr>
                     </thead>
@@ -82,14 +76,18 @@
 
                 // If token generation is successful, update the report dates
                 const today = new Date();
+                const followDue = new Date(today);
                 const nextDue = new Date(today);
-                nextDue.setDate(today.getDate() + 14); // Set next report date 2 weeks from today
+                followDue.setDate(today.getDate() + 14); // Set follow up date 2 weeks from today
+                nextDue.setDate(today.getDate() + 30); // Set next report generation date 30 days from today
 
                 const formattedToday = today.toISOString().split('T')[0];
+                const formattedFollowDue = followDue.toISOString().split('T')[0];
                 const formattedNextDue = nextDue.toISOString().split('T')[0];
 
                 document.getElementById('lastReport').textContent = `Last Report Generated: ${new Date().toISOString().split('T')[0]}`;
-                document.getElementById('nextDue').textContent = `Next due: ${new Date(nextDue).toISOString().split('T')[0]}`;
+                document.getElementById('followDue').textContent = `Follow Up On: ${new Date(followDue).toISOString().split('T')[0]}`;
+                document.getElementById('nextDue').textContent = `Next Report Due: ${new Date(nextDue).toISOString().split('T')[0]}`;
 
                 return fetch('siteimprove.php', {
                     method: 'POST',
@@ -97,6 +95,7 @@
                     body: new URLSearchParams({
                         action: 'update_dates',
                         lastReportGenerated: formattedToday,
+                        followDue: formattedFollowDue,
                         nextReportDue: formattedNextDue
                     })
                 });
@@ -117,6 +116,7 @@
             .then(data => {
                 if (!data.error) {
                     document.getElementById('lastReport').textContent = `Last Report Generated: ${data.lastReportGenerated}`;
+                    document.getElementById('followDue').textContent = `Follow Up On: ${data.followDue}`;
                     document.getElementById('nextDue').textContent = `Next Due: ${data.nextReportDue}`;
                 } else {
                     console.error('Error fetching dates:', data.error);
