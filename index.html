@@ -21,6 +21,10 @@
                 <button type="button" class="btn btn-info" id="generateTokenBtn">Generate Report</button>
                 <p id="tokenOutput"></p> 
                 <button type="button" class="btn btn-info mb-2" id="downloadBtn" onclick="export2csv()">Download as CSV</button>
+                <p>
+                    <span id="lastReport">Last Report Generated: </span><br />
+                    <span id="nextDue">Next due: </span>
+                </p>
             </div>
         
             <div class="col-3 p-3 bg-dark text-white justify-content-center">  
@@ -47,6 +51,9 @@
                             <th scope="col" data-id="copy" class="bg-light">
                                 Copy to Clipboard
                             </th>
+                            <th scope="col" data-id="track" class="bg-light">
+                                Tracker
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -61,6 +68,7 @@
    <script>
         document.getElementById('generateTokenBtn').addEventListener('click', function() {
             document.getElementById('tokenOutput').innerText = 'Generating report...';
+        
             fetch('siteimprove.php', {
                 method: 'POST',
                 body: new URLSearchParams({
@@ -71,11 +79,54 @@
             .then(data => {
                 document.getElementById('tokenOutput').innerText = 'Generated Token: ' + data.token;
                 populateTable(data.hashMap);
+
+                // If token generation is successful, update the report dates
+                const today = new Date();
+                const nextDue = new Date(today);
+                nextDue.setDate(today.getDate() + 14); // Set next report date 2 weeks from today
+
+                const formattedToday = today.toISOString().split('T')[0];
+                const formattedNextDue = nextDue.toISOString().split('T')[0];
+
+                document.getElementById('lastReport').textContent = `Last Report Generated: ${new Date().toISOString().split('T')[0]}`;
+                document.getElementById('nextDue').textContent = `Next due: ${new Date(nextDue).toISOString().split('T')[0]}`;
+
+                return fetch('siteimprove.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({
+                        action: 'update_dates',
+                        lastReportGenerated: formattedToday,
+                        nextReportDue: formattedNextDue
+                    })
+                });
             })
             .catch(error => {
                 document.getElementById('tokenOutput').innerText = 'Error: ' + error;
             });
         });
+
+        // Fetch and display the dates on page load
+        function loadDates() {
+            fetch('siteimprove.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ action: 'get_dates' })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.error) {
+                    document.getElementById('lastReport').textContent = `Last Report Generated: ${data.lastReportGenerated}`;
+                    document.getElementById('nextDue').textContent = `Next Due: ${data.nextReportDue}`;
+                } else {
+                    console.error('Error fetching dates:', data.error);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        // Load dates when the page loads
+        window.onload = loadDates;
    </script>
    <script type='text/javascript' src="script.js"></script>
 </body>

@@ -152,5 +152,33 @@
   if (isset($_POST['action']) && $_POST['action'] == 'generate_token') {
     echo generateToken(); 
   }
+
+  // Retrieves Report Dates from JSON
+  if (isset($_POST['action']) && $_POST['action'] == 'get_dates') {
+    $dateFile = 'report_dates.json';
+    if (file_exists($dateFile)) {
+        $data = file_get_contents($dateFile);
+        echo $data;
+    } else {
+        echo json_encode(["error" => "Date file not found"]);
+    }
+    exit;
+  }
+
+  // Updates Report Dates from JSON
+  if (isset($_POST['action']) && $_POST['action'] == 'update_dates') {
+    $dateFile = 'report_dates.json';
+    $newData = [
+        "lastReportGenerated" => $_POST['lastReportGenerated'],
+        "nextReportDue" => $_POST['nextReportDue']
+    ];
+    
+    if (file_put_contents($dateFile, json_encode($newData, JSON_PRETTY_PRINT))) {
+        echo json_encode(["success" => true]);
+    } else {
+        echo json_encode(["error" => "Failed to update date file"]);
+    }
+    exit;
+  }
   
 ?>

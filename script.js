@@ -11,6 +11,9 @@ function populateTable(tableData) {
         
         data.copy = `<button type="button" class="btn btn-dark m-1" onclick="copyToClipboard('${data.unformatted_urls}', 'url')"><small>Copy URLs</small></button>
                      <button type="button" class="btn btn-dark m-1" onclick="copyToClipboard('${data.unformatted_urls}', 'email')"><small>Email Body</small></button>`;
+
+        data.track = `<button type="button" class="btn btn-dark m-1" onclick="copyToClipboard('${data.unformatted_urls}', 'url')"><small>Copy URLs</small></button>
+                    <button type="button" class="btn btn-dark m-1" onclick="copyToClipboard('${data.unformatted_urls}', 'email')"><small>Email Body</small></button>`;
     });
 
     sortableTable.setData(Object.values(tableData)); 
