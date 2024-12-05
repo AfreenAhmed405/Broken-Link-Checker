@@ -54,23 +54,6 @@ function copyToClipboard(text, type) {
                 });
                 urlsTable += '</ul>';
 
-
-                /** Uncomment for URLS to be in a table */ 
-                // let urlsTable = '<table border="1" cellpadding="5" cellspacing="0" style="width: 50%;">';
-                // urlsTable += '<thead><tr><th>Broken Links</th></tr></thead><tbody>';
-                
-                // if (typeof text === 'string') {
-                //     text = [text];
-                // }
-
-                // urlsArray.forEach(url => {
-                //     url = url.trim();
-                //     if (url) {
-                //         urlsTable += `<tr><td><a href="${url}" target="_blank">${url}</a></td></tr>`;
-                //     }
-                // });
-                // urlsTable += '</tbody></table>';
-
                 const emailWithTable = emailContent.replace('<!-- TABLE_PLACEHOLDER -->', urlsTable);
                 openEmailWindow(emailWithTable);
             })

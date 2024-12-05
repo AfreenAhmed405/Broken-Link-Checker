@@ -33,7 +33,11 @@
             </div>
         </div>
 
-        <div class="row mt-4 mb-5 d-flex justify-content-between"> 
+        <div class="row mt-5 d-flex justify-content-center">
+            <p id="type"><strong>Monthly Broken Link Report</strong></p>
+        </div>
+
+        <div class="row mt-1 mb-5 d-flex justify-content-between"> 
             <div id="dataOutput"></div>      
             <div class="p-1 col-sm-12 sortable-table">
                 <table class="table table-hover table-bordered" id="brokenLinkTable">
@@ -66,7 +70,8 @@
             fetch('siteimprove.php', {
                 method: 'POST',
                 body: new URLSearchParams({
-                    'action': 'generate_token'
+                    'action': 'generate_token',
+                    'reportType': 'monthly'
                 })
             })
             .then(response => response.json())
@@ -103,6 +108,27 @@
             .catch(error => {
                 document.getElementById('tokenOutput').innerText = 'Error: ' + error;
             });
+        });
+
+        document.getElementById('defaultBtn').addEventListener('click', function() {
+            document.getElementById('tokenOutput').innerText = 'Comparing reports...';
+
+            fetch('siteimprove.php', {
+                method: 'POST',
+                body: new URLSearchParams({
+                    'action': 'generate_token',
+                    'reportType': 'follow'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('tokenOutput').innerText = 'Generated Token: ' + data.token;
+                populateTable(data.hashMap);
+            })
+            .catch(error => {
+                document.getElementById('tokenOutput').innerText = 'Error: ' + error;
+            });
+                
         });
 
         // Fetch and display the dates on page load
