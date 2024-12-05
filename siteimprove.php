@@ -3,7 +3,7 @@
   // ----------------------------------------------------------------
   // OAUTH 2.0 CONFIGURATION
   // ----------------------------------------------------------------
-  function generateToken($reportType) {
+  function generateToken() {
     $env = parse_ini_file('tokens.env');  
     $GET_LIBGUIDES = "Authorization: Bearer ";
     $GET_BROKEN_LINKS = $env["GET_BROKEN_LINKS"];
@@ -142,48 +142,6 @@
         }
       }
     } 
-
-    $repeatOffenders = [];
-
-    $reportData = [
-      'reportDate' => date('Y-m-d'), // Current date
-      'brokenLinks' => $hashmap // The list of broken links and their owners
-    ];
-
-    if ($reportType == 'monthly') {
-        file_put_contents('new_report.json', json_encode($reportData, JSON_PRETTY_PRINT));
-    } else {
-        $newReportData = json_decode(file_get_contents('new_report.json'), true);
-        $followUpData = $reportData;
-
-        foreach ($newReportData['brokenLinks'] as $owner => $newReportLinks) {
-          // Check if this owner exists in the follow-up report
-          if (isset($followUpData['brokenLinks'][$owner])) {
-            $newLinks = $newReportLinks['siteimprove_urls'];
-            $followUpLinks = $followUpData['brokenLinks'][$owner]['siteimprove_urls'];
-            $commonLinks = array_intersect($newLinks, $followUpLinks);
-    
-            // If there are common links, add them to the repeat offenders list
-            if (!empty($commonLinks)) {
-              if (!isset($repeatOffenders[$owner])) {
-                $repeatOffenders[$owner] = [
-                    'guide_owner_email' => $newReportLinks['guide_owner_email'],
-                    'siteimprove_urls' => []
-                ];
-              }
-
-              // Add the common URLs to the repeat offenders' siteimprove_urls
-              foreach ($commonLinks as $link) {
-                if (!in_array($link, $repeatOffenders[$owner]['siteimprove_urls'])) {
-                    $repeatOffenders[$owner]['siteimprove_urls'][] = $link;
-                }
-              }
-            }
-          }
-        }
-        $hashmap = $repeatOffenders;  
-    }
-
     return json_encode([
       "token" => $responseData['access_token'], 
       "hashMap" => $hashmap
@@ -192,37 +150,7 @@
 
   // Check if this file is called through AJAX
   if (isset($_POST['action']) && $_POST['action'] == 'generate_token') {
-    $reportType = isset($_POST['reportType']) ? $_POST['reportType'] : 'default';
-    echo generateToken($reportType); 
-  }
-
-  // Retrieves Report Dates from JSON
-  if (isset($_POST['action']) && $_POST['action'] == 'get_dates') {
-    $dateFile = 'report_dates.json';
-    if (file_exists($dateFile)) {
-        $data = file_get_contents($dateFile);
-        echo $data;
-    } else {
-        echo json_encode(["error" => "Date file not found"]);
-    }
-    exit;
-  }
-
-  // Updates Report Dates from JSON
-  if (isset($_POST['action']) && $_POST['action'] == 'update_dates') {
-    $dateFile = 'report_dates.json';
-    $newData = [
-        "lastReportGenerated" => $_POST['lastReportGenerated'],
-        "followDue" => $_POST['followDue'],
-        "nextReportDue" => $_POST['nextReportDue']
-    ];
-    
-    if (file_put_contents($dateFile, json_encode($newData, JSON_PRETTY_PRINT))) {
-        echo json_encode(["success" => true]);
-    } else {
-        echo json_encode(["error" => "Failed to update date file"]);
-    }
-    exit;
+    echo generateToken(); 
   }
   
 ?>
